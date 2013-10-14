@@ -26,6 +26,9 @@
       subcontrol-position: top center; /* помещаем вверху по центру */
       padding: 0 3px;
       background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                         0 #FFFECE,#FFFFFF);
-
+<<<<<<< HEAD
+                                        stop: 0 #FFFECE, stop: 1 #FFFFFF);
+=======
+                                        stop: 0 #FFOECE, stop: 1 #FFFFFF);
+>>>>>>> abf7281a71c6a5957446347ed453d95ad48f171e
   }
