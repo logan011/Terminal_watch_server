@@ -97,7 +97,6 @@ QGroupBox *Widget::createBox()
        QObject::connect(arrbox[countClient].disc,SIGNAL(clicked()),this,SLOT(slotDisconFromServer()));
     return  (arraygroupbox+countClient);
 }
-
 void Widget::slotnewconnection()
 {
     if(!countClient)
