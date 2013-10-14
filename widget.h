@@ -17,18 +17,19 @@
 #include <QWidget>
 #include <QLabel>
 #include <QtSql>
-
+#include <QLineEdit>
 namespace Ui {
 class Widget;
 }
-enum {Money_Dropped,Power,Carry_on,Disconnected,First_packet};
+enum {Money_Dropped,Disconnected,Options};
 struct date{
-    date(){msg  = -1;Temprete =0; Water_left= 50.0;CountMoney =0;power=carry_on = false; ID = -1;}
-    double Temprete,Water_left;
+    date(){msg  = -1;Temprete =0; Water_left= 50.0;CountMoney =0;power=carry_on = false; ID = -1,timesale ="";volt12 = 11.0;volt5 = 4.0;}
+    double Temprete,Water_left,volt12,volt5;
     int CountMoney;
     bool power, carry_on;
     int ID;
    int msg;
+   QString timewater,timesale;
 };
 class Widget : public QWidget
 {
@@ -59,6 +60,10 @@ private:
       QCheckBox *power, *open_out;
       QDoubleSpinBox *money;
       QPushButton *disc;
+      QLineEdit *lastwatersale;
+      QLineEdit *lastwaterapdate;
+      QLineEdit *Voltage12;
+      QLineEdit *Voltage5;
     };
     int countClient;
     int IdClient;
