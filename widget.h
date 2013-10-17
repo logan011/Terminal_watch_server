@@ -11,6 +11,7 @@
 #include<QGridLayout>
 #include <QGroupBox>
 #include <QByteArray>
+#include<QMap>
 #include <QCheckBox>
 #include<QTcpServer>
 #include <QScrollArea>
@@ -21,15 +22,40 @@
 namespace Ui {
 class Widget;
 }
-enum {Money_Dropped,Disconnected,Options};
+enum {Handshake,Money_Dropped,Disconnected,Options};
 struct date{
-    date(){msg  = -1;Temprete =0; Water_left= 50.0;CountMoney =0;power=carry_on = false; ID = -1,timesale ="";volt12 = 11.0;volt5 = 4.0;}
+    date(){msg  = -1;Temprete =20; Water_left= 5000.0;CountMoney =0;power=carry_on = false; ID = -1,timesale ="";volt12 = 11.0;volt5 = 4.0;}
+    void setstruct(int message,int Id,double Temp=20, double Water=50000, double Vol5=4, double Vol12=11, int Mon=0,
+                   bool Power=false, bool Carry=false, QString TimeS="", QString TimeW="") {
+            this->msg = message;
+            this->Temprete = Temp;
+            this->Water_left = Water;
+            this->volt5 = Vol5;
+            this->volt12 = Vol12;
+            this->CountMoney = Mon;
+            this->power = Power;
+            this->carry_on = Carry;
+            this->ID = Id;
+            this->timesale = TimeS;
+            this->timewater = TimeW;
+        }
     double Temprete,Water_left,volt12,volt5;
     int CountMoney;
     bool power, carry_on;
     int ID;
    int msg;
    QString timewater,timesale;
+};
+struct bord
+{
+  QProgressBar *P_temprete,*P_water;
+  QCheckBox *power, *open_out;
+  QDoubleSpinBox *money;
+  QPushButton *disc;
+  QLineEdit *lastwatersale;
+  QLineEdit *lastwaterapdate;
+  QLineEdit *Voltage12;
+  QLineEdit *Voltage5;
 };
 class Widget : public QWidget
 {
@@ -38,40 +64,27 @@ class Widget : public QWidget
 public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();
-    void createtable();
-    void addtodatabase(int ,QString,QString);
 public slots:
     void slotnewconnection();
     void slotReadClient();
-    void slotsendtoclient();
     void slotDisconFromServer();
 private:
     date &deserialize(QByteArray array,date &dest);
+  QByteArray serialize(date packet);
     void printreport( QSqlQuery report);
-    QSqlDatabase DB;
-    QGridLayout *layout;
+    QVBoxLayout *layout;
     QHBoxLayout *title;
+    QMap<int,QTcpSocket *> clientmap;
+    QMap<int,QPushButton*>buutonmap;
     QTcpServer *server;
     QTcpSocket* pClientSocket;
     QLabel *label;
-    struct bord
-    {
-      QProgressBar *P_temprete,*P_water;
-      QCheckBox *power, *open_out;
-      QDoubleSpinBox *money;
-      QPushButton *disc;
-      QLineEdit *lastwatersale;
-      QLineEdit *lastwaterapdate;
-      QLineEdit *Voltage12;
-      QLineEdit *Voltage5;
-    };
     int countClient;
-    int IdClient;
     bord *arrbox;
     QGroupBox *arraygroupbox;
     QGroupBox *createBox();
+    bord * createbord(bord *arrbox);
     Ui::Widget *ui;
-    int countwidget;
     date *datatoread;
 
 };
