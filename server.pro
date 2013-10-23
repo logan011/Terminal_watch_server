@@ -4,16 +4,18 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network sql
-
+QT       += core gui network
+QT      +=sql
 TARGET = server
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        widget.cpp
+        widget.cpp \
+    database.cpp
 
-HEADERS  += widget.h
+HEADERS  += widget.h \
+    database.h
 
 FORMS    += widget.ui
 

@@ -1,17 +1,26 @@
 #include "widget.h"
 #include "ui_widget.h"
 #include <qdebug.h>
-#include <QFile>
+#include "database.h"
 #include<QStyle>
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget)
 {
+  db = new DatabaseManager;
+  if( !db->openDB())
+      qDebug()<<"Eror Creating Databese";
+  if(!db->createTeble1())
+      qDebug() << "Unable to create a table";
+  if(!db->createTeble2())
+      qDebug() << "Unable to create a table";
     countClient = 0;
+    countwidget =0;
    QScrollArea  *area = new QScrollArea;
+   toolbar = new QMenuBar();
    title = new QHBoxLayout;
    arraygroupbox = new QGroupBox[30];
-   layout = new QVBoxLayout;
+   layout = new QGridLayout;
    datatoread = new date();
     arrbox= new bord[30];
     label = new QLabel("<H1>Wait for connection...</H!>");
@@ -100,7 +109,7 @@ void Widget::slotnewconnection()
     }
     if(!layout)
     {
-     layout = new QVBoxLayout;
+     layout = new QGridLayout;
      delete title;
      label->hide();
     }
@@ -108,10 +117,17 @@ void Widget::slotnewconnection()
    clientmap.insert(countClient,pClientSocket);
     connect(pClientSocket, SIGNAL(readyRead()),
                 this,  SLOT(slotReadClient()));
-    layout->addWidget(createBox(),0);
-     setLayout(layout);
+    if(countwidget < 4){
+          layout->addWidget(createBox(),0,countwidget);
+
+      }
+      else
+          layout->addWidget(createBox(),countwidget/4,countwidget%4);
+                  setLayout(layout);
      pClientSocket->write(QByteArray::number(countClient));
+     db->insertinttable1( "Client " +QString::number(countClient),"kopernika",QDate::currentDate().toString(Qt::SystemLocaleShortDate) + " "+ QTime::currentTime().toString());
       countClient ++;
+      countwidget++;
 
 }
 void Widget::slotReadClient()
@@ -128,6 +144,10 @@ void Widget::slotReadClient()
        arrbox[datatoread->ID].Voltage12->setText(QString::number(datatoread->volt12));
        arrbox[datatoread->ID].P_temprete->setValue(datatoread->Temprete);
        arrbox[datatoread->ID].lastwatersale->setText(datatoread->timesale);
+       if(datatoread->timesale!="")
+       db->insertinttable2(QString::number(datatoread->Temprete),QString::number(datatoread->Water_left),QString::number(datatoread->volt5),QString::number(datatoread->volt12),
+              QString::number( datatoread->CountMoney),QString::number(datatoread->power),QString::number(datatoread->carry_on),QString::number(datatoread->ID),datatoread->timesale,
+            datatoread->timewater);
        break;
        }
         case Options:
@@ -138,6 +158,9 @@ void Widget::slotReadClient()
            arrbox[datatoread->ID].Voltage5->setText(QString::number(datatoread->volt5));
             arrbox[datatoread->ID].P_water->setValue(datatoread->Water_left);
            arrbox[datatoread->ID].Voltage12->setText(QString::number(datatoread->volt12));
+           db->insertinttable2(QString::number(datatoread->Temprete),QString::number(datatoread->Water_left),QString::number(datatoread->volt5),QString::number(datatoread->volt12),
+                  QString::number( datatoread->CountMoney),QString::number(datatoread->power),QString::number(datatoread->carry_on),QString::number(datatoread->ID),datatoread->timesale,
+                datatoread->timewater);
            break;
        }
        case Disconnected:
@@ -150,7 +173,7 @@ void Widget::slotReadClient()
                  title->addWidget(label,0,Qt::AlignCenter);
                  label->show();
                  delete layout;
-                 layout = (QVBoxLayout *)0;
+                 layout = (QGridLayout *)0;
                  setLayout(title);
 
            }
@@ -194,7 +217,7 @@ void Widget::slotDisconFromServer()
        title->addWidget(label,0,Qt::AlignCenter);
        label->show();
        delete layout;
-       layout = (QVBoxLayout *)0;
+       layout = (QGridLayout *)0;
        setLayout(title);
 
  }

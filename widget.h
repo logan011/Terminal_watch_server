@@ -17,8 +17,12 @@
 #include <QScrollArea>
 #include <QWidget>
 #include <QLabel>
-#include <QtSql>
 #include <QLineEdit>
+#include <QFile>
+#include <QTime>
+#include <QDate>
+#include<QMenuBar>
+#include "database.h"
 namespace Ui {
 class Widget;
 }
@@ -72,7 +76,7 @@ private:
     date &deserialize(QByteArray array,date &dest);
   QByteArray serialize(date packet);
     void printreport( QSqlQuery report);
-    QVBoxLayout *layout;
+    QGridLayout *layout;
     QHBoxLayout *title;
     QMap<int,QTcpSocket *> clientmap;
     QMap<int,QPushButton*>buutonmap;
@@ -80,13 +84,15 @@ private:
     QTcpSocket* pClientSocket;
     QLabel *label;
     int countClient;
+    int countwidget;
     bord *arrbox;
     QGroupBox *arraygroupbox;
     QGroupBox *createBox();
+    QMenuBar *toolbar;
     bord * createbord(bord *arrbox);
     Ui::Widget *ui;
     date *datatoread;
-
+     DatabaseManager *db;
 };
 
 #endif // WIDGET_H
